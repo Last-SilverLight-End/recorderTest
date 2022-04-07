@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         recorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
         recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
         recorder?.setOutputFile(recordingFilePathway)
-        prepare()
+        recorder?.prepare()
 
         recorder?.start()
         state_record = State.ON_RECORDING
@@ -149,8 +149,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun stopRecording(){
         recorder?.run {
-            stop()
-            release()
+            recorder?.stop()
+            recorder?.release()
         }
         recorder = null
         state_record = State.AFTER_RECORDING
