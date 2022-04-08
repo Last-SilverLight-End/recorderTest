@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Looper.prepare
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Button
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -18,6 +19,9 @@ import java.lang.IllegalArgumentException
 
 class MainActivity : AppCompatActivity() {
 
+    private val resetButton : Button by lazy {
+        findViewById(R.id.resetButton)
+    }
     private val recordButton : RecordButton by lazy {
         findViewById(R.id.recordButton)
     }
@@ -26,6 +30,10 @@ class MainActivity : AppCompatActivity() {
     private var state_record = State.BEFORE_RECORDING
         set(value){
             field = value
+            resetButton.isEnabled =
+                (value == State.AFTER_RECORDING) ||
+                (value == State.ON_PLAYING)
+
             recordButton.updateIconWithState(value)
         }
     private var player : MediaPlayer? = null
@@ -44,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         requestAudioPermission()
         initViews()
         bindViews()
+        initVariables()
     }
 
 
@@ -96,6 +105,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindViews(){
+
+        resetButton.setOnClickListener{
+            stopPlaying()
+            state_record = State.BEFORE_RECORDING
+        }
+
         recordButton.setOnClickListener{
             when(state_record){
                 State.BEFORE_RECORDING ->{
@@ -112,6 +127,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun initVariables(){
+        state_record = State.BEFORE_RECORDING
     }
 
     private fun startRecording(){
